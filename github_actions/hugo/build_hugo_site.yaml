@@ -1,0 +1,26 @@
+# This pipeline is a simple CI workflow that performs the following actions
+# 1. Checkout the repository
+# 2. Set up hugo on the worker node
+# 3. Build the Hugo project to verify that everything is working as expected.
+# This workflow should be run on non-master branches to verify that no breaking changes are introduced
+
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Hugo setup
+      uses: peaceiris/actions-hugo@v2.3.0
+    - name: Build the Hugo project
+      run: hugo -D

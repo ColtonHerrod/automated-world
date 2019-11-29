@@ -1,0 +1,29 @@
+# This pipeline is a CD workflow that performs the following actions to deploy a Hugo site to an Azure static site
+# 1. Checkout the repository
+# 2. Set up hugo on the worker node
+# 3. Build the Hugo project
+# 4. Upload the
+# This workflow should be run on non-master branches to verify that no breaking changes are introduced
+
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: submodule checkout
+      run: git submodule update --init --recursive
+    - name: Hugo setup
+      uses: peaceiris/actions-hugo@v2.3.0
+    - name: Build the Hugo project
+      run: hugo
+    - name: Upload to blob storage
+      run: az storage blob upload-batch --destination '<your_site_container>' --source public/ --account-name <your_azure_account_name> --account-key ${{secrets.<your_azure_storage_key>}}
